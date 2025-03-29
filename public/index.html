@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Price Tracker</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-logo">CRYPTO NOW</a>
+            <ul class="navbar-menu">
+                <li><a href="#home">TRACKER</a></li>
+                <li><a href="#services">FAQ</a></li>
+                <li><a href="#about">LANG</a></li>
+                <li><a href="#contact">LOGIN</a></li>
+            </ul>
+            <div class="navbar-toggle" id="navbar-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+    <h1>CRYPTO PRICE TRACKER 💰</h1>
+    <div id="cryptoContainer"></div>
+
+
+    <script>
+        let lastPrices = {}; // Para almacenar los precios anteriores y poder compararlos con el precio actual
+        let lastSuccessfulData = {}; // Guarda los datos válidos para mantenerlos si hay futuros errores
+
+        async function fetchCryptoPrices() {
+            try {
+                //Llamada a la API del server.js
+                const response = await fetch('http://localhost:3000/api/prices');
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Actualiza la interfaz solo si los datos son válidos
+                updateCryptoBoxes(data);
+
+                lastSuccessfulData = data; // Guarda los datos válidos para mantenerlos si hay futuros errores
+
+                lastPrices = data; // Actualiza los precios anteriores para comparación futura
+
+            } catch (error) {
+                console.error('Error al obtener los precios:', error);
+
+                // Si hay un error, usa los últimos datos válidos
+                if (Object.keys(lastSuccessfulData).length > 0) {
+                    console.log('Usando los últimos datos válidos.');
+                    updateCryptoBoxes(lastSuccessfulData); // Mantener los componentes con los datos previos
+                } else {
+                    console.log('No hay datos previos, mostrando mensaje de error.');
+                    showError(); // Muestra un mensaje de error al usuario si no hay datos previos
+                }
+            }
+        }
+
+        function showError() {
+            const container = document.getElementById('cryptoContainer');
+            container.innerHTML = '<div style="color: #C84040; font-size: 20px;">No se pudo cargar la información de los precios. Intente nuevamente más tarde.</div>';
+        }
+
+        let priceChangeColor;
+
+        function updateCryptoBoxes(data) {
+            const container = document.getElementById('cryptoContainer');
+            container.innerHTML = ''; // Limpiar contenedor
+            
+            for (const [crypto, priceData] of Object.entries(data)) {
+                let cryptoName = crypto.toUpperCase();
+                const changePercent = parseFloat(priceData.percentaje) || 0; // Obtener el % de cambio
+                /*
+                    Se mantienen 16 decimales ya que es la cantidad que devuelve por defecto la API, para poder validar el precio actual con el anterior, 
+                    ya que las variaciones pueden ser infimas, se trabaja con la mayor cantidad de decimales pero luego se muestran 2 en la vista
+                */
+
+                let price = parseFloat(priceData.usd).toFixed(16); 
+
+                // Crear un nuevo div cuadrado para cada criptomoneda
+                const cryptoBox = document.createElement('div');
+                cryptoBox.classList.add('cryptoBox');
+
+                // Comparar con el precio anterior para cambiar de color
+                let previousPrice = lastPrices[crypto] ? parseFloat(lastPrices[crypto].usd).toFixed(16) : price;
+                let textColor = "#f2f0eb";
+                let percentColor = "f2f0eb";
+                let arrow = '';
+
+                if (price > previousPrice) {
+                    priceChangeColor = "#00AC64"; 
+                    textColor = '#201E1F';
+                    arrow = '▲'; // Flecha arriba
+                } else if (price < previousPrice) {
+                    priceChangeColor = "#EB643C"; 
+                    textColor = '#201E1F';
+                    arrow = '▼'; // Flecha abajo
+                }
+                else {
+                    textColor = "#f2f0eb"
+                    priceChangeColor = '201E1F';
+                    percentColor = '#201E1F';
+                }
+                
+                // Actualizar el color de fondo del cuadrado según el cambio de precio
+                // cryptoBox.style.border = `3px solid ${priceChangeColor}`;
+                cryptoBox.style.backgroundColor = priceChangeColor;
+                cryptoBox.style.color = textColor;
+                // Agregar nombre y precio al cuadrado
+                cryptoBox.innerHTML = `
+          <div class="cryptoName">${cryptoName}</div>
+          <div class="cryptoPrice">$${parseFloat(price).toFixed(2).toLocaleString()}</div>
+          <div class="cryptoChange" style="color: ${percentColor}; font-weight: bold;">
+                ${arrow} ${changePercent.toFixed(2)}%
+            </div>
+        `;
+
+                // Añadir el cuadro al contenedor
+                container.appendChild(cryptoBox);
+            }
+
+            /*
+                Realiza una copia profunda (deep copy) del objeto data y asigna esta copia a la variable lastPrices.
+                JSON.stringify(data): Convierte el objeto data en una cadena JSON
+                JSON.parse(jsonData): Convierte la cadena JSON de nuevo en un objeto de JS
+                Crear una copia profunda de un objeto es útil cuando tienes un objeto que contiene referencias a otros objetos. Al hacer esto,
+                se asegura de que las referencias a objetos internos dentro de data no sean compartidas entre el objeto original y la copia.
+                Copia profunda significa que no se copian solo las referencias, sino que los valores de los objetos y subobjetos son copiados de forma independiente, 
+                evitando efectos secundarios no deseados cuando se modifica la copia.
+            */
+            lastPrices = JSON.parse(JSON.stringify(data));
+        }
+
+        //Se llama por primera vez a la API en server.js y luego se solicita repetir la llamada cada 2 segundos
+        fetchCryptoPrices();
+        setInterval(fetchCryptoPrices, 2000);
+    </script>
+</body>
+
+</html>
