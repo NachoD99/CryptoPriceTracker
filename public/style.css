@@ -1,6 +1,6 @@
 body {
   margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Orbitron', sans-serif;
     text-align: center;
     background-color: #121212;
     color: white;
@@ -10,7 +10,6 @@ h1 {
     margin-top: 90px;
     margin-bottom: 50px;
     color: #f2f0eb;
-
 }
 
 
@@ -92,6 +91,11 @@ h1 {
   .navbar-toggle {
       display: flex;
   }
+
+  h1{
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
 }
 
 
@@ -144,3 +148,30 @@ h1 {
     font-weight: 300;
     margin-top: 20px;
   }
+
+  /* 🔹 Cambia el diseño en dispositivos pequeños */
+@media (max-width: 768px) {
+  #cryptoContainer {
+      flex-direction: column; /* Apila los elementos en una lista vertical */
+      align-items: center;
+  }
+
+  .cryptoBox {
+      width: 95%; /* Ocupa casi todo el ancho */
+      max-width: 350px;
+      height: 80px;
+      flex-direction: row;
+  }
+
+  .cryptoBox .cryptoName {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .cryptoBox .cryptoPrice {
+    font-size: 20px;
+    font-weight: 300;
+    margin-top: 0px;
+    margin-left: 20px;
+  }
+}
