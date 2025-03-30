@@ -65,16 +65,3 @@ function openBrowser(url) {
       'xdg-open';
   require('child_process').exec(start + ' ' + url);
 }
-
-/**
- * El addEventListener sirve para acceder a elementos del DOM.
- * document es un objeto global que accede al contenido del DOM
- */
-document.addEventListener("DOMContentLoaded", function () {
-  const toggleButton = document.getElementById("navbar-toggle");
-  const navbarMenu = document.querySelector(".navbar-menu");
-
-  toggleButton.addEventListener("click", () => {
-      navbarMenu.classList.toggle("active");
-  });
-});

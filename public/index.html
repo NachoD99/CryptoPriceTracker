@@ -7,7 +7,7 @@
     <title>Crypto Price Tracker</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/crypto-price-tracker/public/favicon.png">
+    <link rel="icon" type="image/png" href="../favicon.png">
 </head>
 
 <body>
@@ -165,6 +165,22 @@
         //Se llama por primera vez a la API en server.js y luego se solicita repetir la llamada cada 2 segundos
         fetchCryptoPrices();
         setInterval(fetchCryptoPrices, 2000);
+
+
+
+        /**
+         * El addEventListener sirve para acceder a elementos del DOM.
+         * document es un objeto global que accede al contenido del DOM
+         */
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggleButton = document.getElementById("navbar-toggle");
+            const navbarMenu = document.querySelector(".navbar-menu");
+
+            toggleButton.addEventListener("click", () => {
+                navbarMenu.classList.toggle("active");
+            });
+        });
+
     </script>
 </body>
 
