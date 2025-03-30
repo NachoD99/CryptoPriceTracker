@@ -7,26 +7,29 @@
     <title>Crypto Price Tracker</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/crypto-price-tracker/public/favicon.png">
 </head>
 
 <body>
     <nav class="navbar">
-        <div class="navbar-container">
-            <a href="/" class="navbar-logo">CRYPTO NOW</a>
-            <ul class="navbar-menu">
-                <li><a href="#home">TRACKER</a></li>
-                <li><a href="#services">FAQ</a></li>
-                <li><a href="#about">LANG</a></li>
-                <li><a href="#contact">LOGIN</a></li>
-            </ul>
-            <div class="navbar-toggle" id="navbar-toggle">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
+        <div class="navbar-logo">
+            <img src="favicon.png" alt="Crypto Logo">
+            <span>CRYPTO NOW</span>
+        </div>
+        <ul class="navbar-menu">
+            <li><a href="#home">TRACKER</a></li>
+            <li><a href="#services">FAQ</a></li>
+            <li><a href="#about">LANG</a></li>
+            <li><a href="#contact">LOGIN</a></li>
+        </ul>
+        <div class="navbar-toggle" id="navbar-toggle">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
         </div>
     </nav>
-    <h1>CRYPTO PRICE TRACKER 💰</h1>
+    <h1>CRYPTO PRICE TRACKER</h1>
     <div id="cryptoContainer"></div>
 
 
@@ -76,7 +79,7 @@
         function updateCryptoBoxes(data) {
             const container = document.getElementById('cryptoContainer');
             container.innerHTML = ''; // Limpiar contenedor
-            
+
             for (const [crypto, priceData] of Object.entries(data)) {
                 let cryptoName = crypto.toUpperCase();
                 const changePercent = parseFloat(priceData.percentaje) || 0; // Obtener el % de cambio
@@ -85,7 +88,7 @@
                     ya que las variaciones pueden ser infimas, se trabaja con la mayor cantidad de decimales pero luego se muestran 2 en la vista
                 */
 
-                let price = parseFloat(priceData.usd).toFixed(16); 
+                let price = parseFloat(priceData.usd).toFixed(16);
 
                 // Crear un nuevo div cuadrado para cada criptomoneda
                 const cryptoBox = document.createElement('div');
@@ -98,11 +101,11 @@
                 let arrow = '';
 
                 if (price > previousPrice) {
-                    priceChangeColor = "#00AC64"; 
+                    priceChangeColor = "#00AC64";
                     textColor = '#201E1F';
                     arrow = '▲'; // Flecha arriba
                 } else if (price < previousPrice) {
-                    priceChangeColor = "#EB643C"; 
+                    priceChangeColor = "#EB643C";
                     textColor = '#201E1F';
                     arrow = '▼'; // Flecha abajo
                 }
@@ -111,7 +114,7 @@
                     priceChangeColor = '201E1F';
                     percentColor = '#201E1F';
                 }
-                
+
                 // Actualizar el color de fondo del cuadrado según el cambio de precio
                 // cryptoBox.style.border = `3px solid ${priceChangeColor}`;
                 cryptoBox.style.backgroundColor = priceChangeColor;
