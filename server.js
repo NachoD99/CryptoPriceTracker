@@ -52,7 +52,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Iniciar servidor y abrir automáticamente en el navegador
+// Iniciar servidor y abrir automáticamente en el navegador (Usando nodemon server.js)
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
   openBrowser(`http://localhost:${PORT}`);
@@ -66,5 +66,15 @@ function openBrowser(url) {
   require('child_process').exec(start + ' ' + url);
 }
 
+/**
+ * El addEventListener sirve para acceder a elementos del DOM.
+ * document es un objeto global que accede al contenido del DOM
+ */
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleButton = document.getElementById("navbar-toggle");
+  const navbarMenu = document.querySelector(".navbar-menu");
 
-
+  toggleButton.addEventListener("click", () => {
+      navbarMenu.classList.toggle("active");
+  });
+});

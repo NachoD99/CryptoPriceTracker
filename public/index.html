@@ -82,12 +82,11 @@
 
             for (const [crypto, priceData] of Object.entries(data)) {
                 let cryptoName = crypto.toUpperCase();
-                const changePercent = parseFloat(priceData.percentaje) || 0; // Obtener el % de cambio
+                let changePercent = parseFloat(priceData.percentaje) || 0; // Obtener el % de cambio
                 /*
                     Se mantienen 16 decimales ya que es la cantidad que devuelve por defecto la API, para poder validar el precio actual con el anterior, 
                     ya que las variaciones pueden ser infimas, se trabaja con la mayor cantidad de decimales pero luego se muestran 2 en la vista
                 */
-
                 let price = parseFloat(priceData.usd).toFixed(16);
 
                 // Crear un nuevo div cuadrado para cada criptomoneda
@@ -99,12 +98,32 @@
                 let textColor = "#f2f0eb";
                 let percentColor = "f2f0eb";
                 let arrow = '';
+                /*
+                    Reemplazo la lógica de cambiar el color en función al precio ya que la manera en que se actualiza no brinda una buena experiencia de usuario
+                */
+                // if (price > previousPrice) {
+                //     priceChangeColor = "#00AC64";
+                //     textColor = '#201E1F';
+                //     arrow = '▲'; // Flecha arriba
+                // } else if (price < previousPrice) {
+                //     priceChangeColor = "#EB643C";
+                //     textColor = '#201E1F';
+                //     arrow = '▼'; // Flecha abajo
+                // }
+                // else {
+                //     textColor = "#f2f0eb"
+                //     priceChangeColor = '201E1F';
+                //     percentColor = '#201E1F';
+                // }
 
-                if (price > previousPrice) {
+                /*
+                    Mejor utilizo la variable del porcentaje de cambio en las ultimas 24hs para darle más estabilidad al cambio de colores
+                */
+                if (changePercent > 0) {
                     priceChangeColor = "#00AC64";
                     textColor = '#201E1F';
                     arrow = '▲'; // Flecha arriba
-                } else if (price < previousPrice) {
+                } else if (changePercent < 0) {
                     priceChangeColor = "#EB643C";
                     textColor = '#201E1F';
                     arrow = '▼'; // Flecha abajo
@@ -116,10 +135,9 @@
                 }
 
                 // Actualizar el color de fondo del cuadrado según el cambio de precio
-                // cryptoBox.style.border = `3px solid ${priceChangeColor}`;
                 cryptoBox.style.backgroundColor = priceChangeColor;
                 cryptoBox.style.color = textColor;
-                // Agregar nombre y precio al cuadrado
+                // Agregar nombre, precio y porcentaje al cuadrado
                 cryptoBox.innerHTML = `
           <div class="cryptoName">${cryptoName}</div>
           <div class="cryptoPrice">$${parseFloat(price).toFixed(2).toLocaleString()}</div>

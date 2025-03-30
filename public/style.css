@@ -108,20 +108,29 @@ nav {
 }
 
 @media screen and (max-width: 768px) {
+  nav {
+    background-color: #1d1c1c;
+  }
   .navbar-menu {
-      display: none;
-      width: 100%;
-      text-align: center;
-      flex-direction: column;
-  }
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        background: #121212;
+        padding: 10px 0;
+        text-align: center;
+    }
 
-  .navbar-menu.active {
-      display: flex;
-  }
+    .navbar-menu.active {
+        display: flex;
+    }
 
-  .navbar-toggle {
-      display: flex;
-  }
+    .navbar-toggle {
+        display: flex;
+        margin-right: 20px;
+    }
 
   h1{
     font-size: 22px;
@@ -195,12 +204,12 @@ nav {
   }
 
   .cryptoBox .cryptoName {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
   }
 
   .cryptoBox .cryptoPrice {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 300;
     margin-top: 0px;
     margin-left: 20px;
