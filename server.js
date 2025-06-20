@@ -18,7 +18,7 @@ let pricesArray = []; //Array key-value: crypto-precio
 async function updatePrices() {
   try {
     //Documentación de CoinCap: https://docs.coincap.io/#89deffa0-ab03-4e0a-8d92-637a857d2c91
-    const response = await axios.get('https://api.coincap.io/v2/assets?limit=21');
+    const response = await axios.get('https://rest.coincap.io/v3/assets?apiKey=c8c48c864cb68a5cf0bf27264b7f711534ec1ddfd158cf38cba65a1723390537&limit=21');
     const data = response.data.data; // Extraer el array de criptos
 
     //Convertirlo a crypto-precio
