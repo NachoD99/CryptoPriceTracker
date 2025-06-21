@@ -164,7 +164,9 @@
 
         //Se llama por primera vez a la API en server.js y luego se solicita repetir la llamada cada 2 segundos
         fetchCryptoPrices();
-        setInterval(fetchCryptoPrices, 2000);
+
+        //This should be refreshed each 2 seconds but due to API requirements this exceeds the monthly credits
+        // setInterval(fetchCryptoPrices, 2000);
 
 
 
