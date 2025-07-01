@@ -27,7 +27,7 @@ async function updatePrices() {
       acc[coin.id] = { usd: coin.priceUsd, percentaje: coin.changePercent24Hr }; 
       return acc;
     }, {});
-console.log(pricesArray);
+// console.log(pricesArray);
   } catch (error) {
     console.error("Error al obtener datos:", error);
   }
@@ -36,7 +36,7 @@ console.log(pricesArray);
 // Llamar a la función una vez al inicio
 updatePrices();
 // Luego actualizar cada 2 segundos para actualizar pricesArray
-setInterval(updatePrices, 2000);
+// setInterval(updatePrices, 2000);
 
 //API llamada desde el HTML
 app.get('/api/prices', (req, res) => {

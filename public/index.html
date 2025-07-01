@@ -34,12 +34,11 @@
 
 
     <script>
-        let lastPrices = {}; // Para almacenar los precios anteriores y poder compararlos con el precio actual
-        let lastSuccessfulData = {}; // Guarda los datos válidos para mantenerlos si hay futuros errores
+        let lastPrices = {};
+        let lastSuccessfulData = {};
 
         async function fetchCryptoPrices() {
             try {
-                //Llamada a la API del server.js
                 const response = await fetch('https://cryptopricetracker-0w43.onrender.com/api/prices');
 
                 if (!response.ok) {
@@ -48,37 +47,53 @@
 
                 const data = await response.json();
 
-                // Actualiza la interfaz solo si los datos son válidos
+                if (Object.keys(data).length === 0) {
+                    showError();
+                    return;
+                }
+
                 updateCryptoBoxes(data);
 
-                lastSuccessfulData = data; // Guarda los datos válidos para mantenerlos si hay futuros errores
-
-                lastPrices = data; // Actualiza los precios anteriores para comparación futura
+                lastSuccessfulData = data;
+                console.log(data);
+                lastPrices = data;
 
             } catch (error) {
                 console.error('Error al obtener los precios:', error);
 
-                // Si hay un error, usa los últimos datos válidos
                 if (Object.keys(lastSuccessfulData).length > 0) {
                     console.log('Usando los últimos datos válidos.');
-                    updateCryptoBoxes(lastSuccessfulData); // Mantener los componentes con los datos previos
+                    updateCryptoBoxes(lastSuccessfulData);
                 } else {
                     console.log('No hay datos previos, mostrando mensaje de error.');
-                    showError(); // Muestra un mensaje de error al usuario si no hay datos previos
+                    showError();
                 }
             }
         }
 
         function showError() {
             const container = document.getElementById('cryptoContainer');
-            container.innerHTML = '<div style="color: #C84040; font-size: 20px;">No se pudo cargar la información de los precios. Intente nuevamente más tarde.</div>';
+            container.innerHTML = `
+        <div style="
+            display: inline-block;
+            background-color: #C84040;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        ">
+           If you see this message, the monthly limit of free API queries has been reached.
+        </div>
+    `;
         }
 
         let priceChangeColor;
 
         function updateCryptoBoxes(data) {
             const container = document.getElementById('cryptoContainer');
-            container.innerHTML = ''; // Limpiar contenedor
+            container.innerHTML = '';
 
             for (const [crypto, priceData] of Object.entries(data)) {
                 let cryptoName = crypto.toUpperCase();
@@ -89,44 +104,22 @@
                 */
                 let price = parseFloat(priceData.usd).toFixed(16);
 
-                // Crear un nuevo div cuadrado para cada criptomoneda
                 const cryptoBox = document.createElement('div');
                 cryptoBox.classList.add('cryptoBox');
 
-                // Comparar con el precio anterior para cambiar de color
                 let previousPrice = lastPrices[crypto] ? parseFloat(lastPrices[crypto].usd).toFixed(16) : price;
                 let textColor = "#f2f0eb";
                 let percentColor = "f2f0eb";
                 let arrow = '';
-                /*
-                    Reemplazo la lógica de cambiar el color en función al precio ya que la manera en que se actualiza no brinda una buena experiencia de usuario
-                */
-                // if (price > previousPrice) {
-                //     priceChangeColor = "#00AC64";
-                //     textColor = '#201E1F';
-                //     arrow = '▲'; // Flecha arriba
-                // } else if (price < previousPrice) {
-                //     priceChangeColor = "#EB643C";
-                //     textColor = '#201E1F';
-                //     arrow = '▼'; // Flecha abajo
-                // }
-                // else {
-                //     textColor = "#f2f0eb"
-                //     priceChangeColor = '201E1F';
-                //     percentColor = '#201E1F';
-                // }
 
-                /*
-                    Mejor utilizo la variable del porcentaje de cambio en las ultimas 24hs para darle más estabilidad al cambio de colores
-                */
                 if (changePercent > 0) {
                     priceChangeColor = "#00AC64";
                     textColor = '#201E1F';
-                    arrow = '▲'; // Flecha arriba
+                    arrow = '▲';
                 } else if (changePercent < 0) {
                     priceChangeColor = "#EB643C";
                     textColor = '#201E1F';
-                    arrow = '▼'; // Flecha abajo
+                    arrow = '▼';
                 }
                 else {
                     textColor = "#f2f0eb"
@@ -134,10 +127,9 @@
                     percentColor = '#201E1F';
                 }
 
-                // Actualizar el color de fondo del cuadrado según el cambio de precio
                 cryptoBox.style.backgroundColor = priceChangeColor;
                 cryptoBox.style.color = textColor;
-                // Agregar nombre, precio y porcentaje al cuadrado
+
                 cryptoBox.innerHTML = `
           <div class="cryptoName">${cryptoName}</div>
           <div class="cryptoPrice">$${parseFloat(price).toFixed(2).toLocaleString()}</div>
@@ -146,34 +138,16 @@
             </div>
         `;
 
-                // Añadir el cuadro al contenedor
                 container.appendChild(cryptoBox);
             }
-
-            /*
-                Realiza una copia profunda (deep copy) del objeto data y asigna esta copia a la variable lastPrices.
-                JSON.stringify(data): Convierte el objeto data en una cadena JSON
-                JSON.parse(jsonData): Convierte la cadena JSON de nuevo en un objeto de JS
-                Crear una copia profunda de un objeto es útil cuando tienes un objeto que contiene referencias a otros objetos. Al hacer esto,
-                se asegura de que las referencias a objetos internos dentro de data no sean compartidas entre el objeto original y la copia.
-                Copia profunda significa que no se copian solo las referencias, sino que los valores de los objetos y subobjetos son copiados de forma independiente, 
-                evitando efectos secundarios no deseados cuando se modifica la copia.
-            */
             lastPrices = JSON.parse(JSON.stringify(data));
         }
 
-        //Se llama por primera vez a la API en server.js y luego se solicita repetir la llamada cada 2 segundos
         fetchCryptoPrices();
 
         //This should be refreshed each 2 seconds but due to API requirements this exceeds the monthly credits
         // setInterval(fetchCryptoPrices, 2000);
 
-
-
-        /**
-         * El addEventListener sirve para acceder a elementos del DOM.
-         * document es un objeto global que accede al contenido del DOM
-         */
         document.addEventListener("DOMContentLoaded", function () {
             const toggleButton = document.getElementById("navbar-toggle");
             const navbarMenu = document.querySelector(".navbar-menu");
